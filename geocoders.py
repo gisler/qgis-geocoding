@@ -18,7 +18,7 @@ email                : info@itopen.it
  ***************************************************************************/
 """
 import re
-from pyproj import Proj, transform
+from pyproj import Transformer
 from .networkaccessmanager import NetworkAccessManager
 import sys, os, json
 from qgis.core import QgsSettings, QgsMessageLog
@@ -59,13 +59,12 @@ class OsmGeoCoder():
 
 class DorisGeoCoder():
     url = 'https://srv.doris.at/solr/searchservice/search/all2/?q={address}'
-     
-    fromProj = Proj('epsg:3857')
-    toProj   = Proj('epsg:4326')
+    
+    transformer = Transformer.from_crs("epsg:3857", "epsg:4326")
     
     def geoToLonLat(self, geo):
         geo = [re.sub('[^0-9\\.]', '', part) for part in geo.split(' ')]
-        return transform(self.fromProj, self.toProj, geo[0], geo[1])[::-1]
+        return self.transformer.transform(geo[0], geo[1])[::-1]
 
     def geocode(self, address):
         try: 

@@ -39,8 +39,7 @@ def pointToWGS84(point, crs):
     """
     crs is the renderer crs
     """
-    t=QgsCoordinateReferenceSystem()
-    t.createFromSrid(4326)
+    t=QgsCoordinateReferenceSystem("epsg:4326")
     f=crs #QgsCoordinateReferenceSystem()
     #f.createFromProj4(proj4string)
     try:
@@ -54,8 +53,7 @@ def pointToWGS84(point, crs):
     return pt
 
 def pointFromWGS84(point, crs):
-    f=QgsCoordinateReferenceSystem()
-    f.createFromSrid(4326)
+    f=QgsCoordinateReferenceSystem("epsg:4326")
     t=crs # QgsCoordinateReferenceSystem()
     #t.createFromProj4(proj4string)
     try:
