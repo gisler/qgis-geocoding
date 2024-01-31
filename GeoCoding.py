@@ -55,7 +55,6 @@ class GeoCoding:
         self.iface = iface
         self.canvas = iface.mapCanvas()
         # store layer id
-        self.layerid = ''
         self.layer = None
         
 
@@ -309,11 +308,15 @@ class GeoCoding:
     # save point to file, point is in project's crs
     def save_point(self, point, address):
         self.logMessage('Saving point ' + str(point[0])  + ' ' + str(point[1]))
+        
+        layers = self._get_registry().mapLayersByName('GeoCoding Plugin Results')
+
         # create and add the point layer if not exists or not set
-        if not self._get_registry().mapLayer(self.layerid) :
+        if len(layers) == 0:
             # create layer with same CRS as map canvas
             crs = self._get_canvas_crs()
             self.layer = QgsVectorLayer("Point?crs=" + crs.authid(), "GeoCoding Plugin Results", "memory")
+            self.layer.setCustomProperty("skipMemoryLayersCheck", 1)
             self.provider = self.layer.dataProvider()
 
             # add fields
@@ -338,10 +341,8 @@ class GeoCoding:
 
             # add layer if not already
             self._get_registry().addMapLayer(self.layer)
-
-            # store layer id
-            self.layerid = self.layer.id()
-
+        else:
+            self.layer = layers[0]
 
         # add a feature
         try:
